@@ -50,8 +50,14 @@ export default class App extends React.Component {
   selectAnswer = (selectedAnswer: string, nextQuestionId: string) => {
     switch(true) {
       case (nextQuestionId === "init"): //変数の値がinitの時実行される
-        this.displayNextQuestion(nextQuestionId)//("init")で呼ばれる
+        setTimeout (() => this.displayNextQuestion(nextQuestionId), 500);//("init")で呼ばれる
         break; //上記の処理が完了したらswitchぶんを抜ける
+      case (/^https:*/.test(nextQuestionId)): //nextQuestionIdがhttpsから始まる場合
+        const a = document.createElement('a'); //aと言うdom要素を作り
+        a.href = nextQuestionId; //そのようそのリンク先にnextId(リンク)を指定
+        a.target = '_blank'; //新規タブでリンクを開く
+        a.click();
+        break;
       default: //変数の値が上記の条件に当てはまらない時実行される
 
         const chats = this.state.chats; //現在のchatsの情報を取得
@@ -65,7 +71,7 @@ export default class App extends React.Component {
           chats: chats //選択されたchatをsetState
         })
 
-        this.displayNextQuestion(nextQuestionId) //次の質問を表示
+        setTimeout(() => this.displayNextQuestion(nextQuestionId), 1000); //次の質問を表示
         break; //上記の処理が完了したらswitch文を抜ける
     }
   }
@@ -74,6 +80,13 @@ export default class App extends React.Component {
   componentDidMount() {
     const initAnswer= ""
     this.selectAnswer(initAnswer, this.state.currentId) //("", "init")でselectAnswerを呼び出し
+  }
+
+  componentDidUpdate() {
+    const scrollArea = document.getElementById('scroll-area')
+    if(scrollArea) {
+      scrollArea.scrollTop = scrollArea.scrollHeight
+    }
   }
 
   render() {
