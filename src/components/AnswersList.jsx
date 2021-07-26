@@ -8,7 +8,7 @@ const AnswersList = (props) => {
       {/*回答の情報をmapメソッドで繰り返し表示*/}
       {props.answers.map((value, index) => {
         //回答のテキストを出力
-        return <Answer content={value.content} key={index.toString()}/>
+      return <Answer content={value.content} key={index.toString()} select={props.select} nextId={value.nextId}/>
       })}
     </div>
   )

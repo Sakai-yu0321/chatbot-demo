@@ -19,22 +19,27 @@ export default class App extends React.Component {
       //モーダルが閉じているのか開いているのか
       open: false
     }
+    //this.selectAnswerと言う変数が、bindされたbindされたコールバック関数になった
+    this.selectAnswer = this.selectAnswer.bind(this)
+    
   }
+  
 
-  displayNextQuestion = (nextQuestionId) => {
-    //現在のchat情報を取得
-    const chats = this.state.chats
-    //chatsに次の質問の情報をpush
+  //次の質問を表示する関数
+  displayNextQuestion = (nextQuestionId: string) => {
+    const chats = this.state.chats //現在のチャット情報を取得
+
+    console.log(this.state.dataset[nextQuestionId].question);
+    
+
     chats.push({
-      //textに次の質問をpush
-      text: this.state.dataset[nextQuestionId].question,
-      //typeは質問
-      type: 'question'
+      text: this.state.dataset[nextQuestionId].question, //次の質問をpush
+      type: 'question' //typeはquestion
     })
 
     this.setState({
       //次の質問を取得しsetState
-      answers : this.dataset.NextQuestionId.answers,
+      answers: this.state.dataset[nextQuestionId].answers,
       //新しいチャットの情報をsetState
       chats: chats,
       //Idに次のチャット全体の情報をsetState
@@ -42,54 +47,33 @@ export default class App extends React.Component {
     })
   }
 
-  selectAnswer = (selectedAnswer, nextQuestionId) => {
+  selectAnswer = (selectedAnswer: string, nextQuestionId: string) => {
     switch(true) {
-      case (nextQuestionId === 'init'):
-        break;
-      default:
-        const chat = {
-          //回答の情報を取得
-          text: selectedAnswer,
-          //typeは回答
-          type: 'answer'
-        }
-    
-        //変数chatsに現在のchatsの情報を代入（空）
-        const chats = this.state.chats;
-        //chatsに質問のテキストとtypeをpush
-        chats.push(chat)
-    
-        //空のstate、chatsに質問のテキストとtypeをsetState
-        this.setState({
-          chats: chats
+      case (nextQuestionId === "init"): //変数の値がinitの時実行される
+        this.displayNextQuestion(nextQuestionId)//("init")で呼ばれる
+        break; //上記の処理が完了したらswitchぶんを抜ける
+      default: //変数の値が上記の条件に当てはまらない時実行される
+
+        const chats = this.state.chats; //現在のchatsの情報を取得
+
+        chats.push({
+          text: selectedAnswer, //回答の文字列をpush
+          type: 'answer' //type回答
         })
-        break;
+    
+        this.setState({
+          chats: chats //選択されたchatをsetState
+        })
+
+        this.displayNextQuestion(nextQuestionId) //次の質問を表示
+        break; //上記の処理が完了したらswitch文を抜ける
     }
-  }
-
-  //initのanswersという連想配列を初期化する関数
-  initAnswer = () => {
-    //datasetからanswerとquestionが入ったオブジェクトを取得
-    const initDataset = this.state.dataset[this.state.currentId]
-    //↑で取得したオブジェクトからanswer(回答)の連想配列を取得
-    const initAnswers = initDataset.answers
-    this.setState({
-      //answersの連想配列を初期化
-      answers: initAnswers
-    })
-  }
-
-  initChats = () => {
-    //initオブジェクトを取得
-    const initDataset = this.state.dataset[this.state.currentId]
   }
 
   //マウント時に呼び出す関数を定義
   componentDidMount() {
-    //質問の情報を取得しsetState
-    this.initChats()
-    //回答の連想配列を取得初期化
-    this.initAnswer()
+    const initAnswer= ""
+    this.selectAnswer(initAnswer, this.state.currentId) //("", "init")でselectAnswerを呼び出し
   }
 
   render() {
@@ -99,7 +83,7 @@ export default class App extends React.Component {
           {/* 質問のテキストとtypeをChatsコンポーネントに渡す */}
           <Chats chats={this.state.chats}/>
           {/* 初期化された回答の情報をAnswersListに渡す */}
-          <AnswersList answers={this.state.answers}/>
+          <AnswersList answers={this.state.answers} select={this.selectAnswer}/>
         </div>
       </section>
     );
