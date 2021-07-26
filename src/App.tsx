@@ -33,11 +33,7 @@ export default class App extends React.Component {
   displayNextQuestion = (nextQuestionId: string) => {
     // @ts-ignore
     const chats = this.state.chats //現在のチャット情報を取得
-
-    // @ts-ignore
-    console.log(this.state.dataset[nextQuestionId].question);
     
-
     chats.push({
       // @ts-ignore
       text: this.state.dataset[nextQuestionId].question, //次の質問をpush
